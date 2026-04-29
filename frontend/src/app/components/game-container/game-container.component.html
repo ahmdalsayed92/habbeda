@@ -1,0 +1,14 @@
+<!-- game-container.component.html -->
+<div class="game-wrapper">
+  <ng-container [ngSwitch]="game.phase()">
+    <app-category-select *ngSwitchCase="'categorySelect'"></app-category-select>
+    <app-question        *ngSwitchCase="'question'"></app-question>
+    <app-voting          *ngSwitchCase="'voting'"></app-voting>
+    <app-results         *ngSwitchCase="'results'"></app-results>
+    <app-leaderboard     *ngSwitchCase="'ended'" [final]="true" (playAgain)="goHome()"></app-leaderboard>
+
+    <div *ngSwitchDefault class="phase-loading page">
+      <div class="waiting-dots"><span></span><span></span><span></span></div>
+    </div>
+  </ng-container>
+</div>

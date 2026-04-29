@@ -1,0 +1,58 @@
+/* lobby.component.scss */
+.lobby-page {
+  background: radial-gradient(ellipse at 40% 10%, rgba(199,125,255,0.1) 0%, transparent 50%), var(--bg);
+  justify-content: flex-start; padding-top: 32px;
+}
+.lobby-content {
+  width: 100%; max-width: 520px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.lobby-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  background: var(--card); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius); padding: 16px 20px;
+  flex-direction: row-reverse;
+
+  .room-id-block { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
+  .room-label { font-size: 0.7rem; letter-spacing: 1px; color: var(--text3); font-weight: 700; }
+  .room-code {
+    font-family: var(--font-display); font-size: 2rem; color: var(--accent2);
+    letter-spacing: 6px; line-height: 1; text-shadow: 0 0 20px var(--glow-gold);
+  }
+}
+.players-card {
+  .section-title {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px; font-family: var(--font-display); font-size: 1.2rem;
+    flex-direction: row-reverse;
+    .player-count { font-size: 0.85rem; font-family: var(--font-body); color: var(--text3); font-weight: 700; }
+  }
+}
+.players-list { display: flex; flex-direction: column; gap: 8px; }
+.player-chip {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg3); border-radius: 50px; padding: 10px 16px;
+  border: 1px solid transparent; transition: all 0.2s;
+  flex-direction: row-reverse;
+  &.me { border-color: rgba(77,150,255,0.3); background: rgba(77,150,255,0.08); }
+  .chip-avatar { font-size: 1.5rem; }
+  .chip-name   { font-weight: 700; flex: 1; text-align: right; }
+  .chip-host   { font-size: 0.65rem; font-weight: 800; background: var(--accent); color: #fff; padding: 3px 8px; border-radius: 10px; }
+  .me-tag      { font-size: 0.65rem; font-weight: 800; background: rgba(77,150,255,0.3); color: var(--accent4); padding: 3px 8px; border-radius: 10px; }
+}
+.waiting-msg { display: flex; align-items: center; gap: 10px; padding-top: 16px; color: var(--text3); font-size: 0.9rem; font-weight: 600; flex-direction: row-reverse; }
+.instructions-card {
+  h3 { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 12px; color: var(--text2); }
+}
+.instructions-list {
+  list-style: none; display: flex; flex-direction: column; gap: 8px;
+  li { font-size: 0.95rem; color: var(--text2); font-weight: 600; padding: 9px 12px; background: var(--bg3); border-radius: var(--radius-sm); }
+}
+.start-section { padding-bottom: 32px; }
+.need-more { font-size: 0.8rem; opacity: 0.8; }
+.waiting-host {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  color: var(--text2); font-weight: 700; padding: 16px;
+  background: var(--card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.07);
+  flex-direction: row-reverse;
+}

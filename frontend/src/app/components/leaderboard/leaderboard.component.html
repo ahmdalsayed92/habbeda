@@ -1,0 +1,49 @@
+<!-- leaderboard.component.html -->
+<div class="lb-page page">
+  <div class="lb-content anim-slide-up">
+
+    <div class="final-banner" *ngIf="final">
+      <div class="confetti-row">🎉 🏆 🎊</div>
+      <h1 class="final-title">انتهت اللعبة!</h1>
+      <div class="winner-block" *ngIf="winner">
+        <div class="winner-info">
+          <span class="winner-label">الفائز</span>
+          <span class="winner-name">{{ winner.name }}</span>
+          <span class="winner-score">{{ winner.score }} نقطة</span>
+        </div>
+        <span class="winner-avatar">{{ winner.avatar }}</span>
+      </div>
+    </div>
+
+    <div class="lb-card card">
+      <h2 class="lb-heading">{{ final ? 'الترتيب النهائي' : 'لوحة النتائج' }}</h2>
+
+      <div class="leaderboard-list">
+        <div *ngFor="let entry of game.leaderboard(); let i = index"
+             class="leaderboard-item anim-pop"
+             [class.rank-1]="entry.rank === 1"
+             [class.rank-2]="entry.rank === 2"
+             [class.rank-3]="entry.rank === 3"
+             [class.me]="entry.id === game.myId()"
+             [style.animation-delay]="i * 0.08 + 's'">
+          <span class="lb-score">{{ entry.score }}</span>
+          <span class="lb-name">
+            {{ entry.name }}
+            <span class="me-badge" *ngIf="entry.id === game.myId()">أنت</span>
+          </span>
+          <span class="lb-avatar">{{ entry.avatar }}</span>
+          <span class="rank-num" [class.r1]="entry.rank===1" [class.r2]="entry.rank===2" [class.r3]="entry.rank===3">
+            {{ rankEmoji(entry.rank) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lb-actions" *ngIf="final">
+      <button class="btn btn-primary btn-lg btn-full" (click)="playAgain.emit()">
+        🏠 العودة للصفحة الرئيسية
+      </button>
+    </div>
+
+  </div>
+</div>

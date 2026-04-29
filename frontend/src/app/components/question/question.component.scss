@@ -1,0 +1,78 @@
+/* question.component.scss */
+.question-page {
+  background: radial-gradient(ellipse at 50% 0%, rgba(77,150,255,0.1) 0%, transparent 55%), var(--bg);
+  padding-top: 32px; justify-content: flex-start; padding-bottom: 40px;
+}
+
+.q-content {
+  width: 100%; max-width: 700px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────── */
+.top-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; flex-direction: row-reverse;
+
+  .top-badges {
+    display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+  }
+
+  .round-badge {
+    background: var(--bg3); border-radius: 50px; padding: 6px 16px;
+    font-weight: 800; font-size: 0.85rem; color: var(--text2);
+    span { color: var(--accent2); }
+  }
+
+  .category-badge {
+    background: rgba(77,150,255,0.15); border: 1px solid rgba(77,150,255,0.3);
+    border-radius: 50px; padding: 5px 14px; font-weight: 700; font-size: 0.85rem; color: var(--accent4);
+  }
+}
+
+/* ── Answer section ──────────────────────────────────────────── */
+.answer-section {
+  transition: all 0.3s;
+  &.submitted { background: rgba(107,203,119,0.08); border-color: rgba(107,203,119,0.2); }
+}
+
+.input-row {
+  display: flex; gap: 10px; margin-top: 8px; flex-direction: row-reverse;
+  .input-field { flex: 1; }
+  .submit-btn  { white-space: nowrap; }
+  @media (max-width: 500px) { flex-direction: column; }
+}
+
+.hint { color: var(--text3); font-size: 0.9rem; font-weight: 600; margin-top: 10px; }
+
+.submitted-state {
+  display: flex; align-items: center; gap: 16px; padding: 4px 0; flex-direction: row-reverse;
+  .submitted-icon { font-size: 2rem; }
+  .submitted-text {
+    text-align: right;
+    strong { display: block; font-size: 1rem; color: var(--correct); }
+    p { color: var(--text2); font-style: italic; margin-top: 2px; font-size: 0.95rem; }
+  }
+}
+
+/* ── Player status ───────────────────────────────────────────── */
+.player-status {
+  .status-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; font-size: 0.9rem; font-weight: 700; color: var(--text2);
+    flex-direction: row-reverse;
+  }
+  .status-bar {
+    width: 120px; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden;
+    .status-fill { height: 100%; background: linear-gradient(90deg, var(--accent4), var(--accent5)); border-radius: 3px; transition: width 0.4s ease; }
+  }
+}
+
+.player-dots {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  .player-dot {
+    position: relative; font-size: 1.8rem; opacity: 0.4; transition: all 0.3s; line-height: 1;
+    &.answered { opacity: 1; filter: drop-shadow(0 0 8px rgba(107,203,119,0.5)); }
+    .dot-check { position: absolute; bottom: -2px; right: -4px; font-size: 0.65rem; background: var(--correct); color: white; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+  }
+}

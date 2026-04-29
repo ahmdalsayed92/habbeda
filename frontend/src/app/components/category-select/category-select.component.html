@@ -1,0 +1,48 @@
+<!-- category-select.component.html -->
+<div class="cat-page page">
+  <div class="cat-content anim-slide-up">
+
+    <!-- Top bar: round badge + timer -->
+    <div class="top-bar">
+      <span class="round-badge">جولة <span>{{ game.currentRound() }}</span> من {{ game.totalRounds() }}</span>
+      <app-countdown-timer
+        [endTimestamp]="game.timerEnd()"
+        [duration]="game.timerDuration()">
+      </app-countdown-timer>
+    </div>
+
+    <!-- Who is selecting -->
+    <div class="selector-block">
+      <div class="selector-avatar">{{ game.categorySelectorPlayer()?.avatar }}</div>
+      <div class="selector-text">
+        <div class="selector-name" *ngIf="game.isCategorySelector()">
+          🎯 دورك! اختر فئة السؤال
+        </div>
+        <div class="selector-name" *ngIf="!game.isCategorySelector()">
+          <strong>{{ game.categorySelectorPlayer()?.name }}</strong> يختار الفئة...
+          <span class="waiting-dots" style="display:inline-flex; margin-right:8px">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category cards -->
+    <div class="categories-grid" [class.locked]="!game.isCategorySelector()">
+      <button
+        *ngFor="let cat of game.categories(); let i = index"
+        class="cat-card anim-pop"
+        [style.animation-delay]="i * 0.08 + 's'"
+        [class.disabled]="!game.isCategorySelector()"
+        (click)="select(cat)">
+        <span class="cat-emoji">{{ getEmoji(cat) }}</span>
+        <span class="cat-name">{{ cat }}</span>
+      </button>
+    </div>
+
+    <p class="lock-hint" *ngIf="!game.isCategorySelector()">
+      <span class="waiting-dots"><span></span><span></span><span></span></span>
+      في انتظار اختيار الفئة...
+    </p>
+  </div>
+</div>

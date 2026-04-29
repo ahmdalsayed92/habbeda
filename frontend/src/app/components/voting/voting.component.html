@@ -1,0 +1,56 @@
+<!-- voting.component.html -->
+<div class="voting-page page">
+  <div class="v-content anim-slide-up">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="top-badges">
+        <span class="round-badge">جولة <span>{{ game.currentRound() }}</span>/{{ game.totalRounds() }}</span>
+        <span class="category-badge">{{ game.currentQuestion()?.category }}</span>
+      </div>
+      <app-countdown-timer
+        [endTimestamp]="game.timerEnd()"
+        [duration]="game.timerDuration()">
+      </app-countdown-timer>
+    </div>
+
+    <!-- Question reminder -->
+    <div class="question-reminder">
+      <span class="q-label">السؤال</span>
+      <p>{{ game.currentQuestion()?.question }}</p>
+    </div>
+
+    <!-- Instruction -->
+    <div class="vote-instruction">
+      <span *ngIf="!game.submittedVote()">🤔 أي إجابة تعتقد أنها <strong>الصحيحة</strong>؟</span>
+      <span *ngIf="game.submittedVote()">✅ تم تسجيل تصويتك! في انتظار الآخرين...</span>
+    </div>
+
+    <!-- Answer choices -->
+    <div class="answer-grid">
+      <button
+        *ngFor="let answer of game.answerList(); let i = index"
+        class="answer-btn anim-pop"
+        [style.animation-delay]="i * 0.07 + 's'"
+        [class.own-answer]="isOwnAnswer(answer)"
+        [class.selected]="game.myVote() === answer.id"
+        [disabled]="!canVote(answer)"
+        (click)="vote(answer)">
+        <span class="answer-letter">{{ getArabicLetter(i) }}</span>
+        <span class="answer-text">{{ answer.text }}</span>
+      </button>
+    </div>
+
+    <!-- Voter dots -->
+    <div class="voter-status">
+      <div class="voter-dots">
+        <div *ngFor="let p of game.players()" class="voter-dot" [class.voted]="game.votedPlayerIds().has(p.id)">
+          <span>{{ p.avatar }}</span>
+          <div class="dot-check" *ngIf="game.votedPlayerIds().has(p.id)">✓</div>
+        </div>
+      </div>
+      <span class="voter-count">{{ votedCount() }}/{{ totalCount() }} صوّتوا</span>
+    </div>
+
+  </div>
+</div>

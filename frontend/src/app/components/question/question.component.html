@@ -1,0 +1,71 @@
+<!-- question.component.html -->
+<div class="question-page page">
+  <div class="q-content anim-slide-up">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="top-badges">
+        <span class="round-badge">جولة <span>{{ game.currentRound() }}</span>/{{ game.totalRounds() }}</span>
+        <span class="category-badge">{{ game.currentQuestion()?.category }}</span>
+      </div>
+      <app-countdown-timer
+        [endTimestamp]="game.timerEnd()"
+        [duration]="game.timerDuration()">
+      </app-countdown-timer>
+    </div>
+
+    <!-- Question -->
+    <div class="question-card">
+      <img *ngIf="game.currentQuestion()?.image" [src]="game.currentQuestion()!.image" class="question-image" alt="صورة السؤال" />
+      <p class="question-text">{{ game.currentQuestion()?.question }}</p>
+    </div>
+
+    <!-- Answer input -->
+    <div class="answer-section card" [class.submitted]="game.submittedAnswer()">
+      <div *ngIf="!game.submittedAnswer()">
+        <label class="label">اكتب إجابة مزيفة مقنعة 😏</label>
+        <div class="input-row">
+          <button class="btn btn-primary submit-btn" (click)="submit()" [disabled]="!answerInput().trim()">
+            أرسل
+          </button>
+          <input
+            class="input-field"
+            [ngModel]="answerInput()"
+            (ngModelChange)="answerInput.set($event)"
+            (keydown)="onKeydown($event)"
+            placeholder="اكتب شيئاً يصدقه الآخرون..."
+            maxlength="80"
+            autofocus
+          />
+        </div>
+        <p class="hint">😈 كلما كانت إجابتك مقنعة، كلما حصلت على نقاط أكثر!</p>
+      </div>
+
+      <div class="submitted-state" *ngIf="game.submittedAnswer()">
+        <div class="submitted-icon">✅</div>
+        <div class="submitted-text">
+          <strong>تم إرسال إجابتك!</strong>
+          <p>"{{ game.myAnswer() }}"</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Player dots -->
+    <div class="player-status card">
+      <div class="status-header">
+        <div class="status-bar">
+          <div class="status-fill" [style.width.%]="(answeredCount() / totalCount()) * 100"></div>
+        </div>
+        <span>{{ answeredCount() }} / {{ totalCount() }} أجابوا</span>
+      </div>
+      <div class="player-dots">
+        <div *ngFor="let p of game.players()" class="player-dot"
+             [class.answered]="game.answeredPlayerIds().has(p.id)" [title]="p.name">
+          <span>{{ p.avatar }}</span>
+          <div class="dot-check" *ngIf="game.answeredPlayerIds().has(p.id)">✓</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

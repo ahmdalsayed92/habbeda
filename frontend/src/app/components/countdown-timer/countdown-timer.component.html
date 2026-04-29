@@ -1,0 +1,44 @@
+<!-- countdown-timer.component.html -->
+<div class="timer-wrapper" [class.urgent]="isUrgent" [class]="'timer-wrapper ' + colorClass">
+  <svg class="timer-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background track ring -->
+    <circle
+      class="track"
+      cx="60" cy="60"
+      [attr.r]="RADIUS"
+      fill="none"
+      stroke-width="8"
+    />
+    <!-- Progress ring -->
+    <circle
+      class="progress-ring"
+      cx="60" cy="60"
+      [attr.r]="RADIUS"
+      fill="none"
+      stroke-width="8"
+      stroke-linecap="round"
+      [attr.stroke-dasharray]="CIRCUMFERENCE"
+      [attr.stroke-dashoffset]="dashOffset"
+      transform="rotate(-90 60 60)"
+    />
+    <!-- Glow ring (duplicate, blurred via filter) -->
+    <circle
+      class="glow-ring"
+      cx="60" cy="60"
+      [attr.r]="RADIUS"
+      fill="none"
+      stroke-width="10"
+      stroke-linecap="round"
+      [attr.stroke-dasharray]="CIRCUMFERENCE"
+      [attr.stroke-dashoffset]="dashOffset"
+      transform="rotate(-90 60 60)"
+      [class.urgent-glow]="isUrgent"
+    />
+  </svg>
+
+  <!-- Center number -->
+  <div class="timer-center">
+    <span class="timer-number" [class.urgent]="isUrgent">{{ timeLeft() }}</span>
+    <span class="timer-unit">ث</span>
+  </div>
+</div>

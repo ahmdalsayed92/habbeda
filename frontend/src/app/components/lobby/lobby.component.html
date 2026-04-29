@@ -1,0 +1,70 @@
+<!-- lobby.component.html -->
+<div class="lobby-page page">
+  <div class="lobby-content anim-slide-up">
+
+    <!-- Header -->
+    <div class="lobby-header">
+      <div class="room-id-block">
+        <span class="room-label">كود الغرفة</span>
+        <span class="room-code">{{ game.roomId() }}</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" (click)="copyLink()">
+        {{ copied() ? '✅ تم النسخ!' : '🔗 نسخ الرابط' }}
+      </button>
+    </div>
+
+    <!-- Players list -->
+    <div class="card players-card">
+      <h2 class="section-title">
+        <span>اللاعبون</span>
+        <span class="player-count">{{ game.players().length }} / 8</span>
+      </h2>
+
+      <div class="players-list">
+        <div class="player-chip" *ngFor="let p of game.players(); let i = index"
+             [class.me]="p.id === game.myId()"
+             [style.animation-delay]="i * 0.08 + 's'"
+             [class.anim-slide-up]="true">
+          <span class="chip-avatar">{{ p.avatar }}</span>
+          <span class="chip-name">{{ p.name }}</span>
+          <span class="chip-host" *ngIf="p.isHost">مضيف</span>
+          <span class="me-tag" *ngIf="p.id === game.myId()">أنت</span>
+        </div>
+      </div>
+
+      <div class="waiting-msg" *ngIf="game.players().length < 2">
+        <div class="waiting-dots"><span></span><span></span><span></span></div>
+        <span>في انتظار انضمام لاعبين آخرين...</span>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="card instructions-card">
+      <h3>🎮 كيف تلعب؟</h3>
+      <ol class="instructions-list">
+        <li>📋 اختر فئة الأسئلة في كل جولة</li>
+        <li>✍️ اكتب إجابة مزيفة مقنعة</li>
+        <li>🗳️ صوّت على الإجابة الصحيحة حسب ظنك</li>
+        <li>🎯 <strong>+٢ نقطة</strong> إذا خمّنت الصح</li>
+        <li>😈 <strong>+١ نقطة</strong> لكل لاعب يصدّق كذبتك</li>
+      </ol>
+    </div>
+
+    <!-- Start Button -->
+    <div class="start-section">
+      <button class="btn btn-primary btn-lg btn-full"
+              *ngIf="game.isHost()"
+              [disabled]="!canStart()"
+              (click)="startGame()">
+        🚀 ابدأ اللعبة
+        <span class="need-more" *ngIf="!canStart()"> (تحتاج لاعبَين على الأقل)</span>
+      </button>
+
+      <div class="waiting-host" *ngIf="!game.isHost()">
+        <div class="waiting-dots"><span></span><span></span><span></span></div>
+        في انتظار المضيف لبدء اللعبة...
+      </div>
+    </div>
+
+  </div>
+</div>

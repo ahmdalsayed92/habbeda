@@ -1,0 +1,64 @@
+<!-- home.component.html -->
+<div class="home-page page">
+  <div class="bg-particles">
+    <div class="particle" *ngFor="let p of particles" [ngStyle]="p"></div>
+  </div>
+
+  <div class="home-content anim-slide-up">
+    <!-- Logo -->
+    <div class="logo-block">
+      <div class="logo-emoji">🧠</div>
+      <h1 class="game-logo">الهبِّيدة</h1>
+      <p class="logo-sub">خدِّع أصحابك قبل ما يخدعوك!</p>
+    </div>
+
+    <!-- Card -->
+    <div class="home-card card">
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab-btn" [class.active]="tab() === 'create'" (click)="tab.set('create')">
+          🎮 إنشاء غرفة
+        </button>
+        <button class="tab-btn" [class.active]="tab() === 'join'" (click)="tab.set('join')">
+          🚪 انضمام لغرفة
+        </button>
+      </div>
+
+      <!-- Name Input -->
+      <div class="form-group">
+        <label class="label">اسمك في اللعبة</label>
+        <input class="input-field" [ngModel]="name()" (ngModelChange)="name.set($event)"
+               placeholder="اكتب اسمك هنا..." maxlength="20" />
+      </div>
+
+      <!-- Avatar Picker -->
+      <div class="form-group">
+        <label class="label">اختر شخصيتك</label>
+        <div class="avatar-grid">
+          <button class="avatar-option" *ngFor="let a of avatars"
+                  [class.selected]="selectedAvatar() === a"
+                  (click)="selectAvatar(a)">{{a}}</button>
+        </div>
+      </div>
+
+      <!-- Join code (join tab) -->
+      <div class="form-group" *ngIf="tab() === 'join'">
+        <label class="label">كود الغرفة</label>
+        <input class="input-field input-code" [ngModel]="joinCode()"
+               (ngModelChange)="joinCode.set($event.toUpperCase())"
+               placeholder="مثال: AB12CD" maxlength="6" />
+      </div>
+
+      <!-- Error -->
+      <div class="error-msg" *ngIf="error()">⚠️ {{ error() }}</div>
+
+      <!-- Action button -->
+      <button class="btn btn-primary btn-lg btn-full"
+              (click)="tab() === 'create' ? createRoom() : joinRoom()"
+              [disabled]="loading()">
+        <span *ngIf="!loading()">{{ tab() === 'create' ? '🎮 إنشاء الغرفة' : '🚀 انضم الآن' }}</span>
+        <span *ngIf="loading()">جاري الاتصال<span class="waiting-dots"><span></span><span></span><span></span></span></span>
+      </button>
+    </div>
+  </div>
+</div>

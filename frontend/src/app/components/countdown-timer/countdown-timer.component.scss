@@ -1,0 +1,115 @@
+/* countdown-timer.component.scss */
+
+.timer-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  /* Pulse animation kicks in at urgent */
+  &.urgent {
+    animation: pulse-scale 0.6s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes pulse-scale {
+  from { transform: scale(1); }
+  to   { transform: scale(1.06); }
+}
+
+/* ── SVG ──────────────────────────────────────────────────────── */
+.timer-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Background track */
+.track {
+  stroke: rgba(255, 255, 255, 0.07);
+}
+
+/* Main progress ring — color changes with state */
+.progress-ring {
+  transition:
+    stroke-dashoffset 0.35s linear,
+    stroke 0.4s ease;
+
+  .normal &   { stroke: #4d96ff; }
+  .warning &  { stroke: #ffd93d; }
+  .urgent &   { stroke: #ff6b6b; animation: ring-pulse 0.6s ease-in-out infinite alternate; }
+}
+
+/* Soft glow ring behind main ring */
+.glow-ring {
+  opacity: 0.25;
+  filter: blur(4px);
+  transition: stroke-dashoffset 0.35s linear, stroke 0.4s ease;
+
+  .normal &  { stroke: #4d96ff; }
+  .warning & { stroke: #ffd93d; }
+  .urgent &  { stroke: #ff6b6b; opacity: 0.5; }
+
+  &.urgent-glow { animation: glow-pulse 0.6s ease-in-out infinite alternate; }
+}
+
+@keyframes ring-pulse {
+  from { stroke: #ff6b6b; filter: drop-shadow(0 0 4px #ff6b6b); }
+  to   { stroke: #ff3030; filter: drop-shadow(0 0 14px #ff3030); }
+}
+
+@keyframes glow-pulse {
+  from { opacity: 0.3; }
+  to   { opacity: 0.7; }
+}
+
+/* ── Center text ──────────────────────────────────────────────── */
+.timer-center {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  gap: 1px;
+}
+
+.timer-number {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  transition: color 0.3s ease;
+  line-height: 1;
+
+  .normal &, &:not(.urgent)  { color: #fff; }
+  &.urgent { color: #ff6b6b; animation: number-pulse 0.6s ease-in-out infinite alternate; }
+}
+
+.timer-unit {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: 0.5px;
+}
+
+@keyframes number-pulse {
+  from { color: #ff6b6b; text-shadow: 0 0 6px rgba(255,107,107,0.5); }
+  to   { color: #ff2222; text-shadow: 0 0 16px rgba(255,50,50,0.9); }
+}
+
+/* ── Size variants (optional) ─────────────────────────────────── */
+.timer-wrapper.sm {
+  width: 80px; height: 80px;
+  .timer-number { font-size: 1.5rem; }
+}
+
+.timer-wrapper.lg {
+  width: 160px; height: 160px;
+  .timer-number { font-size: 3rem; }
+}

@@ -1,0 +1,47 @@
+/* leaderboard.component.scss */
+.lb-page {
+  background: radial-gradient(ellipse at 50% 10%, rgba(255,217,61,0.12) 0%, transparent 60%), var(--bg);
+  justify-content: flex-start; padding-top: 32px; padding-bottom: 48px;
+}
+.lb-content {
+  width: 100%; max-width: 520px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.final-banner {
+  text-align: center;
+  .confetti-row { font-size: 2.5rem; margin-bottom: 8px; animation: bounce-confetti 1s ease-in-out infinite alternate; }
+  .final-title {
+    font-family: var(--font-display); font-size: 3rem;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 16px;
+  }
+}
+@keyframes bounce-confetti {
+  from { transform: translateY(0) scale(1); }
+  to   { transform: translateY(-6px) scale(1.05); }
+}
+.winner-block {
+  display: flex; align-items: center; gap: 16px;
+  background: linear-gradient(135deg, rgba(255,217,61,0.15), rgba(255,107,107,0.1));
+  border: 2px solid rgba(255,217,61,0.3); border-radius: 20px; padding: 20px 28px;
+  justify-content: center; box-shadow: 0 0 40px rgba(255,217,61,0.2);
+  flex-direction: row-reverse;
+  .winner-avatar { font-size: 3rem; }
+  .winner-info { display: flex; flex-direction: column; text-align: right; }
+  .winner-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; color: var(--accent2); }
+  .winner-name  { font-family: var(--font-display); font-size: 1.8rem; line-height: 1.1; }
+  .winner-score { color: var(--text2); font-weight: 700; font-size: 0.9rem; }
+}
+.lb-card {
+  .lb-heading { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 16px; color: var(--text2); }
+}
+.leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
+.leaderboard-item {
+  &.me { border-color: rgba(77,150,255,0.3) !important; box-shadow: 0 0 16px rgba(77,150,255,0.1) !important; }
+}
+.me-badge {
+  font-size: 0.65rem; font-weight: 800; background: rgba(77,150,255,0.25);
+  color: var(--accent4); padding: 2px 7px; border-radius: 10px; vertical-align: middle; margin-right: 6px;
+}
+.lb-actions { padding-bottom: 16px; }
