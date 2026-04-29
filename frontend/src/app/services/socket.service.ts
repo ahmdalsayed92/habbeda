@@ -2,11 +2,12 @@
 import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class SocketService implements OnDestroy {
   private socket!: Socket;
-  private readonly SERVER_URL = 'http://localhost:3000';
+  private readonly SERVER_URL = environment.apiUrl;
 
   constructor(private ngZone: NgZone) {
     this.connect();
