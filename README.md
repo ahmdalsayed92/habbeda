@@ -1,4 +1,4 @@
-# 🧠 BrainBrawl — Real-Time Multiplayer Trivia Game
+# 🧠 El Habeeda — Real-Time Multiplayer Trivia Game
 
 A Jackbox-style trivia game where players submit fake answers to fool each other.
 Built with **Node.js + Socket.io** (backend) and **Angular 17** (frontend).
