@@ -19,7 +19,7 @@ export class GameService {
   totalRounds = signal<number>(10);
   categorySelectPlayerId = signal<string>('');
   categories = signal<string[]>([]);
-  currentQuestion = signal<{ question: string; category: string; image?: string } | null>(null);
+  currentQuestion = signal<{ question: string; category: string; image?: string; answerWordCount: number } | null>(null);
   answerList = signal<AnswerItem[]>([]);
   myVote = signal<string>('');
   myAnswer = signal<string>('');
@@ -83,7 +83,7 @@ export class GameService {
 
     // Question shown
     this.socket.on<any>('questionStart').subscribe((data) => {
-      this.currentQuestion.set({ question: data.question, category: data.category, image: data.image });
+      this.currentQuestion.set({ question: data.question, category: data.category, image: data.image, answerWordCount: data.answerWordCount ?? 0 });
       this.currentRound.set(data.round);
       this.submittedAnswer.set(false);
       this.answeredPlayerIds.set(new Set());
@@ -114,10 +114,10 @@ export class GameService {
       this.leaderboard.set(results.leaderboard);
       // Update player scores
       this.players.update(players =>
-        players.map(p => ({
-          ...p,
-          score: results.leaderboard.find(l => l.id === p.id)?.score ?? p.score
-        }))
+          players.map(p => ({
+            ...p,
+            score: results.leaderboard.find(l => l.id === p.id)?.score ?? p.score
+          }))
       );
       this.phase.set('results');
     });

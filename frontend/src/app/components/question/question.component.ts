@@ -3,6 +3,7 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GameService } from '../../services/game.service';
+import { SocketService } from '../../services/socket.service';
 import { CountdownTimerComponent } from '../countdown-timer/countdown-timer.component';
 
 @Component({
@@ -15,8 +16,9 @@ import { CountdownTimerComponent } from '../countdown-timer/countdown-timer.comp
 export class QuestionComponent {
   answerInput = signal('');
   correctAnswerWarning = signal(false);
+  isChecking = signal(false);
 
-  constructor(public game: GameService) {}
+  constructor(public game: GameService, private socket: SocketService) {}
 
   answeredCount = computed(() =>
       this.game.players().filter(p => p.connected && this.game.answeredPlayerIds().has(p.id)).length
@@ -24,11 +26,11 @@ export class QuestionComponent {
 
   totalCount = computed(() => this.game.players().filter(p => p.connected).length);
 
-  // كم كلمة في الإجابة الصحيحة
+  // كم كلمة في الإجابة الصحيحة — نحسبها من السؤال نفسه مش من correctAnswer
   answerWordCount = computed(() => {
-    const correct = this.game.currentQuestion()?.correctAnswer ?? '';
-    const parts = correct.trim().split(/[\s\-\u2013\u2014]+/).filter(p => p.length > 0);
-    return parts.length;
+    const q = this.game.currentQuestion();
+    if (!q) return 0;
+    return q.answerWordCount ?? 0;
   });
 
   showWordHint = computed(() => this.answerWordCount() >= 2);
@@ -41,31 +43,23 @@ export class QuestionComponent {
     return 'الإجابة من ' + count + ' كلمات';
   });
 
-  private normalize(text: string): string {
-    return text
-        .trim()
-        .toLowerCase()
-        .replace(/[\u0610-\u061A\u064B-\u065F]/g, '')
-        .replace(/\s+/g, ' ');
-  }
-
-  isCorrectAnswer(input: string): boolean {
-    const correct = this.game.currentQuestion()?.correctAnswer ?? '';
-    return this.normalize(input) === this.normalize(correct);
-  }
-
-  submit() {
+  async submit() {
     const ans = this.answerInput().trim();
-    if (!ans || this.game.submittedAnswer()) return;
+    if (!ans || this.game.submittedAnswer() || this.isChecking()) return;
 
-    if (this.isCorrectAnswer(ans)) {
-      this.correctAnswerWarning.set(true);
-      setTimeout(() => this.correctAnswerWarning.set(false), 3500);
-      return;
+    this.isChecking.set(true);
+    try {
+      const result = await this.socket.emitWithAck<{ isCorrect: boolean }>('checkAnswer', { answer: ans });
+      if (result.isCorrect) {
+        this.correctAnswerWarning.set(true);
+        setTimeout(() => this.correctAnswerWarning.set(false), 3500);
+        return;
+      }
+      this.correctAnswerWarning.set(false);
+      this.game.submitAnswer(ans);
+    } finally {
+      this.isChecking.set(false);
     }
-
-    this.correctAnswerWarning.set(false);
-    this.game.submitAnswer(ans);
   }
 
   onKeydown(event: KeyboardEvent) {
