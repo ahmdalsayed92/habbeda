@@ -1,75 +1,125 @@
 <!-- results.component.html -->
 <div class="results-page page">
-  <div class="r-content anim-fade">
+    <div class="r-content anim-fade">
 
-    <div class="result-banner" [class.correct]="iVotedCorrect()" [class.wrong]="!iVotedCorrect()">
-      <span class="banner-emoji">{{ iVotedCorrect() ? '🎯' : '😅' }}</span>
-      <div class="banner-text">
-        <div class="banner-title">{{ iVotedCorrect() ? 'أحسنت! إجابة صحيحة!' : 'لا بأس، حاول مرة أخرى!' }}</div>
-        <div class="banner-points" *ngIf="myPoints() > 0">+{{ myPoints() }} {{ myPoints() === 1 ? 'نقطة' : 'نقاط' }} في هذه الجولة</div>
-        <div class="banner-points zero" *ngIf="myPoints() === 0">لا نقاط في هذه الجولة</div>
-      </div>
-    </div>
-
-    <div class="correct-callout">
-      <span class="correct-label">✅ الإجابة الصحيحة</span>
-      <span class="correct-text">{{ game.roundResults()?.correctAnswer }}</span>
-    </div>
-
-    <div class="answers-breakdown">
-      <h3 class="section-heading">كيف أجاب الجميع</h3>
-      <div class="answer-grid">
-        <div *ngFor="let answer of game.answerList(); let i = index"
-             class="answer-btn anim-pop"
-             [style.animation-delay]="i * 0.06 + 's'"
-             [class]="getAnswerClass(answer)">
-
-          <div class="answer-tags">
-            <span class="tag tag-correct" *ngIf="answer.isCorrect">✅ صحيحة</span>
-            <span class="tag tag-fake"    *ngIf="answer.isFake">🤖 مُضافة تلقائياً</span>
-            <span class="tag tag-mine"    *ngIf="answer.id === game.myId()">✍️ إجابتك</span>
-            <span class="tag tag-player"  *ngIf="answer.playerId && answer.id !== game.myId() && !answer.isCorrect">
-              كذبة {{ getPlayerName(answer.playerId) }}
-            </span>
-          </div>
-
-          <span class="answer-text">{{ answer.text }}</span>
-
-          <div class="chosen-by" *ngIf="getChoosers(answer).length > 0">
-            <span class="chosen-label">اختارها:</span>
-            <div class="chooser-avatars">
-              <span class="chooser-avatar" *ngFor="let p of getChoosers(answer)" [title]="p!.name">{{ p!.avatar }}</span>
+        <!-- Banner -->
+        <div class="result-banner" [class.correct]="iVotedCorrect()" [class.wrong]="!iVotedCorrect()">
+            <span class="banner-emoji">{{ iVotedCorrect() ? '🎯' : '😅' }}</span>
+            <div class="banner-text">
+                <div class="banner-title">{{ iVotedCorrect() ? 'أحسنت! إجابة صحيحة!' : 'لا بأس، حاول مرة أخرى!' }}</div>
+                <div class="banner-points" *ngIf="myPoints() > 0">+{{ myPoints() }} {{ myPoints() === 1 ? 'نقطة' : 'نقاط' }} في هذه الجولة</div>
+                <div class="banner-points zero" *ngIf="myPoints() === 0">لا نقاط في هذه الجولة</div>
             </div>
-          </div>
-          <div class="no-takers" *ngIf="!answer.isCorrect && getChoosers(answer).length === 0">
-            لم يصدّقها أحد 😢
-          </div>
         </div>
-      </div>
-    </div>
 
-    <div class="round-scores" [class.visible]="revealStep >= 1">
-      <h3 class="section-heading">نقاط هذه الجولة</h3>
-      <div class="score-list">
-        <div *ngFor="let entry of sortedScores()" class="score-entry" [class.me]="entry.id === game.myId()">
-          <span class="score-avatar">{{ entry.avatar }}</span>
-          <span class="score-name">{{ entry.name }}</span>
-          <span class="score-delta" [class.positive]="entry.points > 0">
-            {{ entry.points > 0 ? '+' : '' }}{{ entry.points }}
+        <!-- Correct answer -->
+        <div class="correct-callout">
+            <span class="correct-label">✅ الإجابة الصحيحة</span>
+            <span class="correct-text">{{ game.roundResults()?.correctAnswer }}</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn" [class.active]="activeTab() === 'answers'" (click)="activeTab.set('answers')">
+                📋 الإجابات
+            </button>
+            <button class="tab-btn" [class.active]="activeTab() === 'leaderboard'" (click)="activeTab.set('leaderboard')">
+                🏆 الترتيب الكلي
+            </button>
+        </div>
+
+        <!-- Tab: Answers -->
+        <div *ngIf="activeTab() === 'answers'">
+            <div class="answers-breakdown">
+                <div class="answer-grid">
+                    <div *ngFor="let answer of game.answerList(); let i = index"
+                         class="answer-btn anim-pop"
+                         [style.animation-delay]="i * 0.06 + 's'"
+                         [class]="getAnswerClass(answer)">
+
+                        <div class="answer-tags">
+                            <span class="tag tag-correct" *ngIf="answer.isCorrect">✅ صحيحة</span>
+                            <span class="tag tag-fake"    *ngIf="answer.isFake">🤖 مُضافة تلقائياً</span>
+                            <span class="tag tag-mine"    *ngIf="answer.id === game.myId()">✍️ إجابتك</span>
+                            <span class="tag tag-player"  *ngIf="answer.playerId && answer.id !== game.myId() && !answer.isCorrect">
+                كذبة {{ getPlayerName(answer.playerId) }}
+              </span>
+                        </div>
+
+                        <span class="answer-text">{{ answer.text }}</span>
+
+                        <div class="chosen-by" *ngIf="getChoosers(answer).length > 0">
+                            <span class="chosen-label">اختارها:</span>
+                            <div class="chooser-avatars">
+                                <span class="chooser-avatar" *ngFor="let p of getChoosers(answer)" [title]="p!.name">{{ p!.avatar }}</span>
+                            </div>
+                        </div>
+                        <div class="no-takers" *ngIf="!answer.isCorrect && getChoosers(answer).length === 0">
+                            لم يصدّقها أحد 😢
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Round scores -->
+            <div class="round-scores" [class.visible]="revealStep >= 1">
+                <h3 class="section-heading">نقاط هذه الجولة</h3>
+                <div class="score-list">
+                    <div *ngFor="let entry of sortedRoundScores()" class="score-entry" [class.me]="entry.id === game.myId()">
+                        <span class="score-avatar">{{ entry.avatar }}</span>
+                        <span class="score-name">{{ entry.name }}</span>
+                        <span class="score-delta" [class.positive]="entry.points > 0">
+              {{ entry.points > 0 ? '+' : '' }}{{ entry.points }}
+            </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Full Leaderboard -->
+        <div *ngIf="activeTab() === 'leaderboard'" class="leaderboard-tab">
+            <div class="lb-list">
+                <div *ngFor="let entry of sortedLeaderboard(); let i = index"
+                     class="lb-entry anim-pop"
+                     [style.animation-delay]="i * 0.05 + 's'"
+                     [class.me]="entry.id === game.myId()"
+                     [class.top1]="i === 0"
+                     [class.top2]="i === 1"
+                     [class.top3]="i === 2">
+
+          <span class="lb-rank">
+            {{ i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.' }}
           </span>
+                    <span class="lb-avatar">{{ entry.avatar }}</span>
+                    <span class="lb-name">{{ entry.name }}</span>
+                    <span class="lb-score">{{ entry.score }} <small>نقطة</small></span>
+                </div>
+            </div>
+
+            <!-- Round delta hint -->
+            <div class="round-delta-hint">
+                <h4>مكسب هذه الجولة</h4>
+                <div class="delta-list">
+                    <div *ngFor="let entry of sortedRoundScores()" class="delta-entry">
+                        <span>{{ entry.avatar }} {{ entry.name }}</span>
+                        <span class="delta-val" [class.positive]="entry.points > 0">
+              {{ entry.points > 0 ? '+' : '' }}{{ entry.points }}
+            </span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="action-section">
-      <button class="btn btn-primary btn-lg btn-full" *ngIf="game.isHost()" (click)="nextRound()">
-        {{ isLastRound ? '🏆 عرض النتائج النهائية' : '➡️ الجولة التالية' }}
-      </button>
-      <div class="waiting-host" *ngIf="!game.isHost()">
-        <div class="waiting-dots"><span></span><span></span><span></span></div>
-        في انتظار المضيف...
-      </div>
-    </div>
+        <!-- Action -->
+        <div class="action-section">
+            <button class="btn btn-primary btn-lg btn-full" *ngIf="game.isHost()" (click)="nextRound()">
+                {{ isLastRound ? '🏆 عرض النتائج النهائية' : '➡️ الجولة التالية' }}
+            </button>
+            <div class="waiting-host" *ngIf="!game.isHost()">
+                <div class="waiting-dots"><span></span><span></span><span></span></div>
+                في انتظار المضيف...
+            </div>
+        </div>
 
-  </div>
+    </div>
 </div>

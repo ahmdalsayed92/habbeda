@@ -146,6 +146,7 @@ export class GameService {
     this.myId.set(res.player.id);
     this.players.set([res.player]);
     this.phase.set('lobby');
+    this.saveSession(res.roomId);
     return res.roomId;
   }
 
@@ -157,6 +158,7 @@ export class GameService {
     this.roomId.set(res.roomId);
     this.myId.set(res.player.id);
     this.phase.set('lobby');
+    this.saveSession(res.roomId);
   }
 
   startGame() {
@@ -181,6 +183,78 @@ export class GameService {
 
   nextRound() {
     this.socket.emit('nextRound');
+  }
+
+  // ── Session persistence ─────────────────────────────────────────
+  saveSession(roomId: string) {
+    localStorage.setItem('hb_session', JSON.stringify({
+      roomId,
+      name: this.myName(),
+      avatar: this.myAvatar(),
+    }));
+  }
+
+  loadSession(): { roomId: string; name: string; avatar: string } | null {
+    try {
+      const raw = localStorage.getItem('hb_session');
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  clearSession() {
+    localStorage.removeItem('hb_session');
+  }
+
+  async tryRejoin(): Promise<boolean> {
+    const session = this.loadSession();
+    if (!session) return false;
+
+    this.myName.set(session.name);
+    this.myAvatar.set(session.avatar);
+
+    const res = await this.socket.emitWithAck<any>('rejoinRoom', {
+      roomId: session.roomId,
+      name: session.name,
+      avatar: session.avatar,
+    });
+
+    if (res.error) { this.clearSession(); return false; }
+
+    // Restore state from snapshot
+    const s = res.state;
+    this.roomId.set(s.roomId);
+    this.myId.set(this.socket.socketId);
+    this.players.set(s.players);
+    this.currentRound.set(s.currentRound);
+    this.totalRounds.set(s.totalRounds);
+    this.leaderboard.set(s.leaderboard ?? []);
+    this.timerEnd.set(s.timerEnd ?? 0);
+
+    if (s.question) {
+      this.currentQuestion.set({
+        question: s.question.question,
+        category: s.question.category,
+        image: s.question.image,
+        answerWordCount: s.question.answerWordCount ?? 0,
+        correctAnswer: s.question.correctAnswer ?? '',
+      });
+    }
+
+    if (s.answerList?.length) this.answerList.set(s.answerList);
+    if (s.roundResults)      this.roundResults.set(s.roundResults);
+
+    if (s.phase === 'categorySelect') {
+      this.categorySelectPlayerId.set(s.categorySelectPlayer);
+      this.categories.set(s.categories ?? []);
+    }
+
+    // Navigate to game and set phase
+    this.phase.set(s.phase);
+    if (s.phase !== 'lobby') {
+      this.router.navigate(['/game', s.roomId]);
+    }
+
+    return true;
   }
 
   reset() {

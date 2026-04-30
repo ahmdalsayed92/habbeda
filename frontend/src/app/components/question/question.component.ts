@@ -25,7 +25,6 @@ export class QuestionComponent {
 
   totalCount = computed(() => this.game.players().filter(p => p.connected).length);
 
-  // كم كلمة في الإجابة الصحيحة — نحسبها من السؤال نفسه مش من correctAnswer
   answerWordCount = computed(() => {
     const q = this.game.currentQuestion();
     if (!q) return 0;
@@ -44,7 +43,7 @@ export class QuestionComponent {
 
   private normalize(s: string): string {
     return s.trim().toLowerCase()
-        .replace(/[ؐ-ًؚ-ٟ]/g, '')
+        .replace(/[\u0610-\u061A\u064B-\u065F]/g, '')
         .replace(/\s+/g, ' ');
   }
 
@@ -52,13 +51,15 @@ export class QuestionComponent {
     const ans = this.answerInput().trim();
     if (!ans || this.game.submittedAnswer()) return;
 
+    // ١ - تحقق لو الإجابة صح
     const correct = this.game.currentQuestion()?.correctAnswer ?? '';
     const isCorrect = correct !== '' && this.normalize(ans) === this.normalize(correct);
 
     if (isCorrect) {
+      // اظهر الرسالة وامنع الـ submit
       this.correctAnswerWarning.set(true);
       setTimeout(() => this.correctAnswerWarning.set(false), 3500);
-      return;
+      return; // ← مش بيكمل للـ submitAnswer
     }
 
     this.correctAnswerWarning.set(false);

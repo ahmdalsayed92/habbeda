@@ -68,3 +68,60 @@
   background: var(--card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.07);
   flex-direction: row-reverse;
 }
+
+/* ── Tabs ──────────────────────────────────────────────────────── */
+.tabs {
+  display: flex; gap: 8px; margin: 16px 0;
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px; padding: 4px;
+}
+.tab-btn {
+  flex: 1; padding: 10px; border: none; border-radius: 9px;
+  background: transparent; color: rgba(255,255,255,0.5);
+  font-family: 'Cairo', sans-serif; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  &.active {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+}
+
+/* ── Full Leaderboard tab ─────────────────────────────────────── */
+.leaderboard-tab { margin-top: 4px; }
+.lb-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+.lb-entry {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.2s;
+  &.me { border-color: rgba(99,179,237,0.4); background: rgba(99,179,237,0.08); }
+  &.top1 { background: rgba(255,215,0,0.08); border-color: rgba(255,215,0,0.3); }
+  &.top2 { background: rgba(192,192,192,0.08); border-color: rgba(192,192,192,0.25); }
+  &.top3 { background: rgba(205,127,50,0.08); border-color: rgba(205,127,50,0.25); }
+}
+.lb-rank { font-size: 1.1rem; width: 28px; text-align: center; }
+.lb-avatar { font-size: 1.4rem; }
+.lb-name { flex: 1; font-size: 0.95rem; font-weight: 600; color: #fff; }
+.lb-score {
+  font-size: 1.1rem; font-weight: 700; color: #ffd700;
+  small { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-right: 3px; }
+}
+
+/* ── Round delta inside leaderboard tab ───────────────────────── */
+.round-delta-hint {
+  background: rgba(255,255,255,0.04);
+  border-radius: 12px; padding: 14px 16px;
+  h4 { margin: 0 0 10px; font-size: 0.85rem; color: rgba(255,255,255,0.5); font-weight: 600; }
+}
+.delta-list { display: flex; flex-direction: column; gap: 6px; }
+.delta-entry {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.88rem; color: rgba(255,255,255,0.7);
+}
+.delta-val {
+  font-weight: 700; color: rgba(255,255,255,0.3);
+  &.positive { color: #68d391; }
+}

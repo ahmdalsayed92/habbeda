@@ -1,5 +1,5 @@
-// components/results/results.component.ts
-import { Component, computed, OnInit } from '@angular/core';
+// results.component.ts
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameService } from '../../services/game.service';
 import { AnswerItem } from '../../models/game.models';
@@ -12,28 +12,29 @@ import { AnswerItem } from '../../models/game.models';
   styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent implements OnInit {
-  revealStep = 0; // 0=answers, 1=scores
+  revealStep = 0;
+  activeTab = signal<'answers' | 'leaderboard'>('answers');
 
   constructor(public game: GameService) {}
 
   ngOnInit() {
-    // Auto-reveal scores after 2 seconds
-    setTimeout(() => this.revealStep = 1, 2000);
+    setTimeout(() => this.revealStep = 1, 1500);
+    // تلقائياً انتقل للـ leaderboard بعد 4 ثواني
+    setTimeout(() => this.activeTab.set('leaderboard'), 4000);
   }
 
   getAnswerClass(answer: AnswerItem): string {
     if (answer.isCorrect) return 'revealed-correct';
-    const myAnswer = this.game.answerList().find(a => a.id === this.game.myId());
-    if (answer.id === this.game.myId()) return 'revealed-my-wrong'; // my submitted fake
+    if (answer.id === this.game.myId()) return 'revealed-my-wrong';
     return 'revealed-wrong';
   }
 
   getChoosers(answer: AnswerItem) {
     const votes = this.game.roundResults()?.votes ?? {};
-    const chooserIds = Object.entries(votes)
-      .filter(([, answId]) => answId === answer.id)
-      .map(([voterId]) => voterId);
-    return chooserIds.map(id => this.game.players().find(p => p.id === id)).filter(Boolean);
+    return Object.entries(votes)
+        .filter(([, answId]) => answId === answer.id)
+        .map(([voterId]) => this.game.players().find(p => p.id === voterId))
+        .filter(Boolean);
   }
 
   myPoints = computed(() => {
@@ -45,19 +46,25 @@ export class ResultsComponent implements OnInit {
   iVotedCorrect = computed(() => {
     const results = this.game.roundResults();
     if (!results) return false;
-    return results.votes[this.game.myId()] === 'correct';
+    return results.votes?.[this.game.myId()] === 'correct';
   });
 
-  sortedScores = computed(() => {
+  sortedRoundScores = computed(() => {
     const results = this.game.roundResults();
     if (!results) return [];
     return Object.entries(results.roundScores)
-      .map(([id, s]) => ({ id, ...s }))
-      .sort((a, b) => b.points - a.points);
+        .map(([id, s]) => ({ id, ...s }))
+        .sort((a, b) => b.points - a.points);
   });
 
+  // الـ leaderboard الكامل المحدّث بعد كل جولة
+  sortedLeaderboard = computed(() =>
+      [...this.game.leaderboard()].sort((a, b) => b.score - a.score)
+          .map((p, i) => ({ ...p, rank: i + 1 }))
+  );
+
   getPlayerName(playerId: string): string {
-    return this.game.players().find(p => p.id === playerId)?.name ?? "Player";
+    return this.game.players().find(p => p.id === playerId)?.name ?? 'لاعب';
   }
 
   get isLastRound() {
@@ -68,5 +75,3 @@ export class ResultsComponent implements OnInit {
     this.game.nextRound();
   }
 }
-
-// helper

@@ -6,7 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { GameService } from '../../services/game.service';
 
 const AVATARS = ['🦊','🐼','🦁','🐸','🐧','🦄','🐯','🐻','🦋','🐙',
-                 '🦀','🐬','🦖','🐲','🦅','🦉','🐝','🦔','🐺','🎃'];
+  '🦀','🐬','🦖','🐲','🦅','🦉','🐝','🦔','🐺','🎃'];
 
 @Component({
   selector: 'app-home',
@@ -33,16 +33,25 @@ export class HomeComponent {
     'animation-delay': `${Math.random() * 8}s`,
   }));
 
+  checkingRejoin = signal(true);
+
   constructor(
-    private game: GameService,
-    private router: Router,
-    private route: ActivatedRoute
+      private game: GameService,
+      private router: Router,
+      private route: ActivatedRoute
   ) {
     const roomId = this.route.snapshot.paramMap.get('id');
     if (roomId) {
       this.joinCode.set(roomId);
       this.tab.set('join');
     }
+
+    // Try to rejoin existing session on page load
+    setTimeout(async () => {
+      const rejoined = await this.game.tryRejoin();
+      if (!rejoined) this.checkingRejoin.set(false);
+      // if rejoined, router already navigated
+    }, 600); // wait for socket to connect
   }
 
   selectAvatar(a: string) { this.selectedAvatar.set(a); }
