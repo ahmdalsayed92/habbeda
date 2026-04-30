@@ -19,7 +19,7 @@ export class GameService {
   totalRounds = signal<number>(10);
   categorySelectPlayerId = signal<string>('');
   categories = signal<string[]>([]);
-  currentQuestion = signal<{ question: string; category: string; image?: string; answerWordCount: number; correctAnswer: string } | null>(null);
+  currentQuestion = signal<{ question: string; category: string; image?: string; answerWordCount: number; correctAnswer: string; wrongAnswers: string[] } | null>(null);
   answerList = signal<AnswerItem[]>([]);
   myVote = signal<string>('');
   myAnswer = signal<string>('');
@@ -29,7 +29,6 @@ export class GameService {
   timerDuration = signal<number>(45);
   timerPhase = signal<'answering' | 'voting' | 'categorySelect'>('answering');
   submittedAnswer = signal<boolean>(false);
-  answerRejected = signal<boolean>(false);
   submittedVote = signal<boolean>(false);
   answeredPlayerIds = signal<Set<string>>(new Set());
   votedPlayerIds = signal<Set<string>>(new Set());
@@ -84,7 +83,7 @@ export class GameService {
 
     // Question shown
     this.socket.on<any>('questionStart').subscribe((data) => {
-      this.currentQuestion.set({ question: data.question, category: data.category, image: data.image, answerWordCount: data.answerWordCount ?? 0, correctAnswer: data.correctAnswer ?? '' });
+      this.currentQuestion.set({ question: data.question, category: data.category, image: data.image, answerWordCount: data.answerWordCount ?? 0, correctAnswer: data.correctAnswer ?? '', wrongAnswers: data.wrongAnswers ?? [] });
       this.currentRound.set(data.round);
       this.submittedAnswer.set(false);
       this.answeredPlayerIds.set(new Set());
@@ -121,13 +120,6 @@ export class GameService {
           }))
       );
       this.phase.set('results');
-    });
-
-    // Answer rejected by server (correct answer submitted)
-    this.socket.on<{ reason: string }>('answerRejected').subscribe(() => {
-      this.submittedAnswer.set(false);
-      this.answerRejected.set(true);
-      setTimeout(() => this.answerRejected.set(false), 3500);
     });
 
     // Timer
@@ -254,6 +246,7 @@ export class GameService {
         image: s.question.image,
         answerWordCount: s.question.answerWordCount ?? 0,
         correctAnswer: s.question.correctAnswer ?? '',
+        wrongAnswers: s.question.wrongAnswers ?? [],
       });
     }
 
