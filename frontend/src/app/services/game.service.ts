@@ -28,7 +28,8 @@ export class GameService {
   timerEnd = signal<number>(0);
   timerDuration = signal<number>(45);
   timerPhase = signal<'answering' | 'voting' | 'categorySelect'>('answering');
-  submittedAnswer = signal<boolean>(false);
+  submittedAnswer  = signal<boolean>(false);
+  reconnecting     = signal<boolean>(false);
   submittedVote = signal<boolean>(false);
   answeredPlayerIds = signal<Set<string>>(new Set());
   votedPlayerIds = signal<Set<string>>(new Set());
