@@ -29,6 +29,7 @@ export class GameService {
   timerDuration = signal<number>(45);
   timerPhase = signal<'answering' | 'voting' | 'categorySelect'>('answering');
   submittedAnswer = signal<boolean>(false);
+  answerRejected = signal<boolean>(false);
   submittedVote = signal<boolean>(false);
   answeredPlayerIds = signal<Set<string>>(new Set());
   votedPlayerIds = signal<Set<string>>(new Set());
@@ -120,6 +121,13 @@ export class GameService {
           }))
       );
       this.phase.set('results');
+    });
+
+    // Answer rejected by server (correct answer submitted)
+    this.socket.on<{ reason: string }>('answerRejected').subscribe(() => {
+      this.submittedAnswer.set(false);
+      this.answerRejected.set(true);
+      setTimeout(() => this.answerRejected.set(false), 3500);
     });
 
     // Timer

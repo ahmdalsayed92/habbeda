@@ -36,7 +36,7 @@
                     </button>
                     <input
                             class="input-field"
-                            [class.input-error]="correctAnswerWarning()"
+                            [class.input-error]="game.answerRejected()"
                             [ngModel]="answerInput()"
                             (ngModelChange)="answerInput.set($event)"
                             (keydown)="onKeydown($event)"
@@ -47,12 +47,12 @@
                 </div>
 
                 <!-- Correct answer warning -->
-                <div class="correct-warning" *ngIf="correctAnswerWarning()">
+                <div class="correct-warning" *ngIf="game.answerRejected()">
                     <span class="warn-icon">🚫</span>
                     <span>دي الإجابة الصح! لازم تكتب إجابة <strong>غلط</strong> عشان تخدع الباقيين 😈</span>
                 </div>
 
-                <p class="hint" *ngIf="!correctAnswerWarning()">😈 كلما كانت إجابتك مقنعة، كلما حصلت على نقاط أكثر!</p>
+                <p class="hint" *ngIf="!game.answerRejected()">😈 كلما كانت إجابتك مقنعة، كلما حصلت على نقاط أكثر!</p>
             </div>
 
             <div class="submitted-state" *ngIf="game.submittedAnswer()">
