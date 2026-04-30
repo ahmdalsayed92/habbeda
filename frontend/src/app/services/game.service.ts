@@ -212,13 +212,22 @@ export class GameService {
     this.myName.set(session.name);
     this.myAvatar.set(session.avatar);
 
-    const res = await this.socket.emitWithAck<any>('rejoinRoom', {
-      roomId: session.roomId,
-      name: session.name,
-      avatar: session.avatar,
-    });
+    let res: any;
+    try {
+      res = await Promise.race([
+        this.socket.emitWithAck<any>('rejoinRoom', {
+          roomId: session.roomId,
+          name: session.name,
+          avatar: session.avatar,
+        }),
+        new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
+      ]);
+    } catch {
+      this.clearSession();
+      return false;
+    }
 
-    if (res.error) { this.clearSession(); return false; }
+    if (!res || res.error) { this.clearSession(); return false; }
 
     // Restore state from snapshot
     const s = res.state;

@@ -46,12 +46,19 @@ export class HomeComponent {
       this.tab.set('join');
     }
 
-    // Try to rejoin existing session on page load
+    // Try to rejoin existing session — hard timeout of 3s no matter what
+    const rejoinTimeout = setTimeout(() => this.checkingRejoin.set(false), 3000);
+
     setTimeout(async () => {
-      const rejoined = await this.game.tryRejoin();
-      if (!rejoined) this.checkingRejoin.set(false);
-      // if rejoined, router already navigated
-    }, 600); // wait for socket to connect
+      try {
+        await this.game.tryRejoin();
+      } catch {
+        // ignore errors
+      } finally {
+        clearTimeout(rejoinTimeout);
+        this.checkingRejoin.set(false);
+      }
+    }, 600);
   }
 
   selectAvatar(a: string) { this.selectedAvatar.set(a); }
